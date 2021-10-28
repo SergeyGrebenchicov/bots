@@ -10,6 +10,6 @@ let config = {
 };
 
 var timerId = setTimeout(function tick() {
-  app.initExmo(config);
+  app.initialization(config);
   timerId = setTimeout(tick, 10000);
 }, 10000);

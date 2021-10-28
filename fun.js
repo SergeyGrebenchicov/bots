@@ -3,9 +3,9 @@ module.exports.Time = function Time () {
   return '[' + d.getDate() + '.' + d.getMonth() + '.' + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + ']:';
 }
 
-module.exports.If = function If () {
+module.exports.If = function If (id) {
   var d = new Date();
-  return '[' + d.getDate() + '.' + d.getMonth() + '.' + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + ']: IF';
+  return '[' + d.getDate() + '.' + d.getMonth() + '.' + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + ']: [' + id + '] IF';
 }
 
 module.exports.Valid = function Valid (rs, qr, cur1, cur2) {
@@ -16,11 +16,27 @@ module.exports.Valid = function Valid (rs, qr, cur1, cur2) {
   switch (qr) {
     case "user_info":        console.log( this.Time(), `QUERY (${qr}) ${cur1} =`, (JSON.parse(rs)).balances[cur1], `${cur2} =`,  (JSON.parse(rs)).balances[cur2] ); break;
     case "order_create":     console.log( this.Time(), 'QUERY Создан ордер', rs); break;
-    case "user_open_orders": console.log( this.Time(), `QUERY (${qr})`, rs ); break;
-    case "trades":  rs;      break;
-    case "pair_settings":    console.log( this.Time(), `QUERY (${qr})`, JSON.stringify(JSON.parse(rs)[coinPair]) ); break;
-    case "order_trades":     console.log( this.Time(), `QUERY (${qr})`, JSON.parse(rs).error ); break;
-    case "order_cancel":     console.log( this.Time(), `QUERY (${qr})`, JSON.parse(rs).error ); break;
+    case "user_open_orders":
+      var mass = JSON.parse(rs);
+      for (var key in mass) {
+          console.log( this.Time(), `QUERY (${qr})`, key);
+          console.table(mass[key]);
+      };
+      break;
+    case "trades": rs; break;
+    case "pair_settings":
+      console.log( this.Time(), `QUERY (${qr})` );
+      console.table( JSON.parse(rs)[coinPair] );
+      break;
+    case "order_trades":
+      var res = JSON.parse(rs);
+      if ( res.result == true ) {
+        console.log( this.Time(), `QUERY (${qr})`, JSON.parse(rs).error );
+      }
+      break;
+    case "order_cancel":
+      console.log( this.Time(), `QUERY (${qr})`, JSON.parse(rs).error );
+      break;
     default:                 console.log( this.Time(), `QUERY (${qr})`, rs);
   }
 
